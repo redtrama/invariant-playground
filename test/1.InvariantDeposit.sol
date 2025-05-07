@@ -7,7 +7,7 @@ import {Deposit} from "../src/1.Deposit.sol";
 /// How to run this test:
 /// run the whole test:
 /// `forge test --mc InvariantDeposit -vvvv`
-/// alternatively use --mt for specific invariant function: 
+/// alternatively use --mt for specific invariant function:
 /// `forge test --mt invariant_alwaysWithdrawable -vvvv`
 contract InvariantDeposit is Test {
     Deposit deposit;
