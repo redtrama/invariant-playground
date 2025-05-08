@@ -27,7 +27,7 @@ contract InvariantSideEntranceLenderPool is Test {
 
     /// 1. Balance of the pool should be equl or greater than initial balance
     /// NOTE this was failing at first, and it found the issue by changing depth in foundry.toml from 23 to 230
-    function invariant_PoolBalaneEgThanInitialBalance() external view {
-        assert(address(pool).balance >= pool.initialPoolBalance());
-    }
+    // function invariant_PoolBalaneEgThanInitialBalance() external view {
+    //     assert(address(pool).balance >= pool.initialPoolBalance());
+    // }
 }

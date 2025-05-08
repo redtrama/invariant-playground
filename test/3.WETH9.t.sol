@@ -18,23 +18,43 @@ contract WETH9Test is Test {
         targetContract(address(handler));
     }
 
-    /// Conservation of ETH through the system invariant
+    /*///////////////////////////////////////////////////////////////
+                            INVARIANTS
+    //////////////////////////////////////////////////////////////*/
+
+    /// INVARIANT 1) The ETH amount supply should be equal to the sum of handler eth balance and weth total supply
     function invariant_ConservationOfETH() external payable {
         assertEq(handler.ETH_SUPPLY(), address(handler).balance + weth.totalSupply());
     }
 
-
-    /// NOTE Implement the invariant for matching the total balance with users balances
-    // function invariant_solvencyBalances() public view {
-    //     uint256 sumOfBalances = 1;
-    //     assertEq(address(weth).balance, sumOfBalances);
-    // }
-
-    /// We track the sum of all deposits and withdrawals and compare the difference with Weth balance
+    /// INVARIANT 2) Eth balance in WETH shoud be equal to the difference between all deposits and all withdrawals
     function invariant_SolvencyDeposits() external view {
         assertEq(address(weth).balance, handler.ghost_depositSum() - handler.ghost_withdrawSum());
     }
 
+    /// INVARIANT 3) ETH balance in WETH should be equal to the total supply of WETH
+    function invariant_ETHbalanceEqToWethSupply() public view {
+        assertEq(address(weth).balance, weth.totalSupply());
+    }
+
+    /// INVARIANT 4) The ETH balance on WETH should be equal to the sum of all deposits
+    /// For implementing this one we need to track balances of all users
+    /// Once we have the actor arrays we can sum up all the balances of all users and compare it with the WETH balance
+    /// NOTE it may take longer since it has to loop through all actors
+    function invariant_ETHbalanceEqToSumOfDeposits() public view {
+        //// declare sum of balances variable
+        uint256 sumOfAllBalances;
+
+        /// Save on memory the actors array
+        address[] memory actors = handler.actors();
+
+        /// Loop through all actors and sum up their weth balances
+        for (uint256 i; i < actors.length; i++) {
+            sumOfAllBalances += weth.balanceOf(actors[i]);
+        }
+
+        assertEq(address(weth).balance, sumOfAllBalances);
+    }
 
     /// Adding this function made the test SolvencyDeposits() pass
     receive() external payable {}
